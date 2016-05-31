@@ -15,16 +15,24 @@ class ProgramPageBase(ProgramsConfigMixin, UniqueCourseTest):
 
         self.set_programs_api_configuration(is_enabled=True)
 
-    def stub_api(self, course_id=None):
+    def stub_api(self, course_id=None, program_id=None):
         """Stub out the programs API with fake data."""
         name = 'Fake Program'
         status = 'active'
         org_key = self.course_info['org']
         course_id = course_id if course_id else self.course_id
 
-        ProgramsFixture().install_programs([
-            FakeProgram(name=name, status=status, org_key=org_key, course_id=course_id),
-        ])
+        ProgramsFixture().install_programs(
+            [
+                FakeProgram(
+                    name=name,
+                    status=status,
+                    org_key=org_key,
+                    course_id=course_id,
+                    program_id=program_id,
+                )
+            ]
+        )
 
     def auth(self, enroll=True):
         """Authenticate, enrolling the user in the configured course if requested."""
@@ -120,7 +128,8 @@ class ProgramDetailsPageA11yTest(ProgramPageBase):
 
     def test_a11y(self):
         """Test a11y of the page's state."""
-        self.auth(enroll=False)
+        self.stub_api(program_id=ProgramDetailsPage.program_id)
+        self.auth()
         self.details_page.visit()
 
         self.details_page.a11y_audit.check_for_accessibility_errors()

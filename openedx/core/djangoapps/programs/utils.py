@@ -13,6 +13,7 @@ from openedx.core.djangoapps.content.course_overviews.models import CourseOvervi
 from openedx.core.djangoapps.programs.models import ProgramsApiConfig
 from openedx.core.lib.edx_api_utils import get_edx_api_data
 from student.models import CourseEnrollment
+from xmodule.course_metadata_utils import DEFAULT_START_DATE
 
 
 log = logging.getLogger(__name__)
@@ -301,8 +302,10 @@ def supplement_program_data(program_data, user):
             run_mode['course_image_url'] = course_overview.course_image_url
 
             human_friendly_format = '%x'
-            run_mode['start_date'] = course_overview.start.strftime(human_friendly_format)
-            run_mode['end_date'] = course_overview.end.strftime(human_friendly_format)
+            start_date = course_overview.start or DEFAULT_START_DATE
+            end_date = course_overview.end or datetime.datetime.max.replace(tzinfo=pytz.UTC)
+            run_mode['start_date'] = start_date.strftime(human_friendly_format)
+            run_mode['end_date'] = end_date.strftime(human_friendly_format)
 
             run_mode['is_enrolled'] = CourseEnrollment.is_enrolled(user, course_key)
 

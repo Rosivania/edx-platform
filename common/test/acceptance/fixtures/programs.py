@@ -11,7 +11,8 @@ from .config import ConfigModelFixture
 from openedx.core.djangoapps.programs.tests import factories
 
 
-FakeProgram = namedtuple('FakeProgram', ['name', 'status', 'org_key', 'course_id'])
+# TODO: Use factories directly instead of using this namedtuple as a proxy.
+FakeProgram = namedtuple('FakeProgram', ['name', 'status', 'org_key', 'course_id', 'program_id'])
 
 
 class ProgramsFixture(object):
@@ -19,32 +20,47 @@ class ProgramsFixture(object):
     Interface to set up mock responses from the Programs stub server.
     """
 
-    def install_programs(self, fake_programs):
+    def install_programs(self, fake_programs, single=False):
         """
-        Sets the response data for the programs list endpoint.
+        Sets the response data for Programs API endpoints.
 
         At present, `fake_programs` must be a iterable of FakeProgram named tuples.
         """
-        programs = []
-        for program in fake_programs:
-            run_mode = factories.RunMode(course_key=program.course_id)
-            course_code = factories.CourseCode(run_modes=[run_mode])
-            org = factories.Organization(key=program.org_key)
+        if single:
+            data = fake_programs[0]
+            program = self._create_program(data)
 
-            program = factories.Program(
-                name=program.name,
-                status=program.status,
-                organizations=[org],
-                course_codes=[course_code]
-            )
-            programs.append(program)
+            path = 'programs/{}'.format(data.program_id)
+            api_result = program
+        else:
+            programs = [self._create_program(data) for data in fake_programs]
 
-        api_result = {'results': programs}
+            path = 'programs'
+            api_result = {'results': programs}
 
         requests.put(
             '{}/set_config'.format(PROGRAMS_STUB_URL),
-            data={'programs': json.dumps(api_result)},
+            data={path: json.dumps(api_result)},
         )
+
+    def _create_program(self, data):
+        """Create a fake program.
+
+        Arguments:
+            data (FakeProgram): A named tuple containing data used to create a fake program.
+        """
+        run_mode = factories.RunMode(course_key=data.course_id)
+        course_code = factories.CourseCode(run_modes=[run_mode])
+        org = factories.Organization(key=data.org_key)
+
+        program = factories.Program(
+            name=data.name,
+            status=data.status,
+            organizations=[org],
+            course_codes=[course_code]
+        )
+
+        return program
 
 
 class ProgramsConfigMixin(object):

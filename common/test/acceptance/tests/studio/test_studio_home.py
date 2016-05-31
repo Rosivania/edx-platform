@@ -112,8 +112,20 @@ class DashboardProgramsTabTest(ProgramsConfigMixin, WebAppTest):
         the list is nonempty.
         """
         test_program_values = [
-            FakeProgram(name='first program', status='unpublished', org_key='org1', course_id='foo/bar/baz'),
-            FakeProgram(name='second program', status='unpublished', org_key='org2', course_id='qux/quux/corge'),
+            FakeProgram(
+                name='first program',
+                status='unpublished',
+                org_key='org1',
+                course_id='foo/bar/baz',
+                program_id=None,
+            ),
+            FakeProgram(
+                name='second program',
+                status='unpublished',
+                org_key='org2',
+                course_id='qux/quux/corge',
+                program_id=None,
+            ),
         ]
         ProgramsFixture().install_programs(test_program_values)
 
