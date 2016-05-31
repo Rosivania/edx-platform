@@ -406,6 +406,11 @@
 // view - bulk email
 // --------------------
 .instructor-dashboard-wrapper-2 section.idash-section#send_email {
+  h2 {
+    // override forced uppercase
+    text-transform: none;
+  }
+
   // form fields
   .list-fields {
     list-style: none;
@@ -416,12 +421,52 @@
       margin-bottom: $baseline;
       padding: 0;
 
-      .label {
-        display: block;
-      }
-
       ul {
         list-style-type: none;
+      }
+
+      legend {
+        margin-bottom: 1em;
+      }
+
+      input[name="send_to"] {
+        float: left;
+        margin-top: .3em;
+        margin-left: .1em;
+      }
+
+      input[name="send_to"]+label {
+        display: block;
+        padding-left: 1.3em;
+        margin-bottom: 0;
+      }
+
+      input[name="send_to"]:checked+label {
+        font-weight: bold;
+      }
+
+      input[name="send_to"]:focus+label, input[name="send_to"]:hover+label {
+        background-color: $gray-l2;
+
+        * {
+          background-color: $gray-l2;
+        }
+      }
+
+      .email-targets-primary {
+        display: table-cell;
+        margin: 0;
+        width: 20%;
+      }
+
+      .email-targets-secondary {
+        display: table-cell;
+        margin: 0;
+        @include columns(2);
+
+        .subheading {
+          font-size: .9em;
+        }
       }
 
       &:last-child {

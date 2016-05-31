@@ -8,31 +8,47 @@ from openedx.core.djangolib.markup import HTML
   <h2> ${_("Send Email")} </h2>
   <div class="request-response msg msg-confirm copy" id="request-response"></div>
   <ul class="list-fields">
-    <li class="field">
-        ${_("Send to:")}
-        <ul role="group" aria-label="${_('Send to:')}">
-            <li>
-                <label>
-                    <input type="checkbox" name="send_to" value="myself">
-                        ${_("Myself")}
-                    </input>
-                </label>
-            </li>
-            <li>
-                <label>
-                    <input type="checkbox" name="send_to" value="staff">
-                        ${_("Staff and Admin")}
-                    </input>
-                </label>
-            </li>
-            <li>
-                <label>
-                    <input type="checkbox" name="send_to" value="learners">
-                        ${_("All Learners")}
-                    </input>
-                </label>
-            </li>
-        </ul>
+      <li class="field">
+          <div class="send_to_list">${_("Send to:")}</div>
+      </li>
+      <li class="field">
+        <fieldset>
+            <legend class="sr">${_("Send to:")}</legend>
+            <ul role="group" class="email-targets-primary">
+                <li>
+                    <input type="checkbox" name="send_to" value="myself" id="target_myself">
+                    <label for="target_myself">${_("Myself")}</label>
+                </li>
+                <li>
+                    <input type="checkbox" name="send_to" value="staff" id="target_staff">
+                    <label for="target_staff">${_("Staff and Admin")}</label>
+                </li>
+                <li>
+                    <input type="checkbox" name="send_to" value="learners" id="target_learners">
+                    <label for="target_learners">${_("All Learners")}</label>
+                </li>
+            </ul>
+            %if len(section_data['cohorts']) > 0:
+            <ul role="group" class="email-targets-secondary">
+                <li>
+                    <input type="checkbox" name="send_to" value="cohort:default" id="target_cohort_default">
+                    <label for="target_cohort_default">
+                        ${_("Default Group")}
+                        <br/>
+                        <div class="subheading">
+                            ${_("(Students without cohort assignment)")}
+                        </div>
+                    </label>
+                </li>
+            %for cohort in section_data['cohorts']:
+                <li>
+                    <input type="checkbox" name="send_to" value="cohort:${cohort.id}" id="target_cohort_${cohort.id}">
+                    <label for="target_cohort_${cohort.id}">${_("Cohort: ") + cohort.name}</label>
+                </li>
+            %endfor
+            </ul>
+            %endif
+        </fieldset>
     </li>
     <li class="field">
         <label>
