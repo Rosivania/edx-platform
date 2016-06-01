@@ -267,26 +267,40 @@ class TestViewDispatch(TestCase):
         self.assertTrue(args, msg_no_request)
         self.assertEqual(args[0], 'request')
 
-    def _get_request(self, client_id):
+    def _post_request(self, client_id):
         """
         Return a request with the specified client_id in the body
         """
         return RequestFactory().post('/', {'client_id': client_id})
 
-    def test_dispatching_to_dot(self):
+    def _get_request(self, client_id):
+        """
+        Return a request with the specified client_id in the get parameters
+        """
+        return RequestFactory().get('/?client_id={}'.format(client_id))
+
+    def test_dispatching_post_to_dot(self):
+        request = self._post_request('dot-id')
+        self.assertEqual(self.view.select_backend(request), self.dot_adapter.backend)
+
+    def test_dispatching_post_to_dop(self):
+        request = self._post_request('dop-id')
+        self.assertEqual(self.view.select_backend(request), self.dop_adapter.backend)
+
+    def test_dispatching_get_to_dot(self):
         request = self._get_request('dot-id')
         self.assertEqual(self.view.select_backend(request), self.dot_adapter.backend)
 
-    def test_dispatching_to_dop(self):
+    def test_dispatching_get_to_dop(self):
         request = self._get_request('dop-id')
         self.assertEqual(self.view.select_backend(request), self.dop_adapter.backend)
 
     def test_dispatching_with_no_client(self):
-        request = self._get_request(None)
+        request = self._post_request(None)
         self.assertEqual(self.view.select_backend(request), self.dop_adapter.backend)
 
     def test_dispatching_with_invalid_client(self):
-        request = self._get_request('abcesdfljh')
+        request = self._post_request('abcesdfljh')
         self.assertEqual(self.view.select_backend(request), self.dop_adapter.backend)
 
     def test_get_view_for_dot(self):
