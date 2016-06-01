@@ -33,7 +33,7 @@ from courseware.access import has_access
 from courseware.courses import get_course_by_id, get_studio_url
 from django_comment_client.utils import has_forum_access
 from django_comment_common.models import FORUM_ROLE_ADMINISTRATOR
-from openedx.core.djangoapps.course_groups.cohorts import get_course_cohorts
+from openedx.core.djangoapps.course_groups.cohorts import get_course_cohorts, is_course_cohorted, DEFAULT_COHORT_NAME
 from student.models import CourseEnrollment
 from shoppingcart.models import Coupon, PaidCourseRegistration, CourseRegCodeItem
 from course_modes.models import CourseMode, CourseModesArchive
@@ -610,8 +610,15 @@ def _section_send_email(course, access):
         # xblock rendering.
         request_token=uuid.uuid1().get_hex()
     )
+    cohorts = []
+    if is_course_cohorted(course_key):
+        # filter out DEFAULT_COHORT_NAME, it gets special treatment
+        cohorts = [
+            cohort
+            for cohort in get_course_cohorts(course)
+            if cohort.name != DEFAULT_COHORT_NAME
+        ]
     email_editor = fragment.content
-    cohorts = get_course_cohorts(course)
     section_data = {
         'section_key': 'send_email',
         'section_display_name': _('Email'),
