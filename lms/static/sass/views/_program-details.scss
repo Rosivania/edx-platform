@@ -1,3 +1,37 @@
-.org-logo {
-  width: 120px;
+.program-header {
+	.banner-content {
+		padding-top: 100px;
+		height: 330px;
+	}
+
+	.title,
+	.subtitle {
+		color: palette(grayscale, white-t);
+	}
+
+	.org-wrapper {
+		position: absolute;
+		top: 0;
+		background: palette(grayscale, white-t);
+		opacity: 0.7;
+	}
+
+	.org-logo {
+  		width: 200px;
+	}
+
+	.breadcrumb-list {
+		list-style-type: none;
+		margin: 0;
+	}
+
+	.crumb {
+		position: relative;
+		float: left;
+	}
+
+	.crumb-separator {
+		padding: 0 5px;
+	}
 }
+

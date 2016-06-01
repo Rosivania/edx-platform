@@ -1,11 +1,22 @@
 .full-width-banner {
+	position: relative;
+
+	banner-background-wrapper {
+		height: 330px;
+		overflow: hidden;
+	}
+
 	.banner-background-image {
-		position: absolute;
-		top: 0;
-		left: 0;
+		width: 100%;
 	}
 
 	.banner-content {
-		z-index: z-index(mid-front);
+		position: absolute;
+		top: 0;
+		left: 0;
+
+		@include susy-media($bp-screen-lg) {
+			left: calc( (100% - 73.125rem) / 2);
+		}
 	}
 }
